@@ -2,10 +2,11 @@ import z from 'zod'
 import { knex } from '../src/database'
 import { FastifyInstance } from 'fastify'
 import { randomUUID } from 'node:crypto'
+import { checkSessionIdExists } from '../src/middleware/check-sessionId-exists'
 
 
 export async function dietRoutes(app: FastifyInstance) {
-app.post('/user', async (request, reply) => {
+app.post('/user', {preHandler: checkSessionIdExists}, async (request, reply) => {
   const createUser = z.object({
     name: z.string(),
     last_name: z.string()
