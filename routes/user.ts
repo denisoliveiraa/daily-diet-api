@@ -6,7 +6,7 @@ import { checkSessionIdExists } from '../src/middleware/check-sessionId-exists'
 
 
 export async function dietRoutes(app: FastifyInstance) {
-app.post('/user', {preHandler: checkSessionIdExists}, async (request, reply) => {
+app.post('/user',  async (request, reply) => {
   const createUser = z.object({
     name: z.string(),
     last_name: z.string()
@@ -34,7 +34,7 @@ app.post('/user', {preHandler: checkSessionIdExists}, async (request, reply) => 
   return reply.status(201).send()
 })
 
-app.get('/user', async (request, reply) => {
+app.get('/user',{preHandler: checkSessionIdExists}, async (request, reply) => {
   
   const listUser = await knex('user').select()
 
