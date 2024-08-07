@@ -60,4 +60,26 @@ app.put('/meal/:id', async (request, reply) => {
 
 })
 
+
+app.delete('/meal/:id', async (request, response) => {
+  const getUserIDSchema = z.object({
+    id: z.string().uuid()
+  })
+
+  const { id } = getUserIDSchema.parse(request.params)
+
+  const getMealResult =  knex('meal').select('id').where('id',id ).first()
+
+  if(!getMealResult){
+    throw new Error ('Meal does not exists')
+  }
+
+  await knex('meal').where('id', id).del()
+
+  return response.status(200).send('Delete works very well')
+
+
+
+})
+
 }
