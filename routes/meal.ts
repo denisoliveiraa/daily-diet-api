@@ -82,4 +82,72 @@ app.delete('/meal/:id', async (request, response) => {
 
 })
 
+
+app.get('/meal/:id', async (request, response) => {
+  const userSchema = z.object({
+    id: z.string().uuid()
+  })
+
+
+  const { id } = userSchema.parse(request.params)
+
+  const checkUser = knex('user').select('*').where('user_id', id).first()
+
+  if(!checkUser){
+    throw new Error ('User not exists or do not have list of meals')
+  }
+
+
+
+})
+
+
+app.post('/meal/register-diet', async (request, reply) => {
+  const idSchema = z.object({
+    mealId: z.string().uuid(),
+    userId: z.string().uuid(),
+    dietId: z.string().uuid()
+  })
+ 
+
+  const { mealId, userId, dietId } = idSchema.parse({
+    mealId: request.body,
+    userId: request.body,
+    dietId: request.body,
+  })
+
+
+  const checkUser = knex('user').select('*').where('id', userId).first()
+
+  if(!checkUser){
+    throw new Error ('User not exists')
+  }
+
+  const checkDiet = knex('diet').select('*').where('id', dietId).first()
+
+  if(!checkDiet){
+    throw new Error ('Diet not exists')
+  }
+
+  const checkMeal = knex('meal').select('*').where('id', mealId).first()
+
+  if(!checkMeal){
+    throw new Error ('Meal not exists')
+  }
+
+
+   await knex('meal_diet').insert({
+    id: crypto.randomUUID(),
+    dietId,
+    mealId,
+    userId
+  })
+  return reply.status(201).send()
+
+  
+
+})
+
+
+
 }
